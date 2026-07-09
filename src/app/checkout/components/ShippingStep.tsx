@@ -45,7 +45,7 @@ export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProp
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cepDestino: destinoCep,
-          items: items.map(i => ({ id: i.id, quantidade: i.quantidade, preco: i.preco, peso_gramas: i.peso_gramas }))
+          items: items.map(i => ({ id: i.id, quantidade: i.quantidade, preco: i.preco, peso_gramas: (i as any).peso_gramas }))
         })
       });
       if (res.ok) {

@@ -198,7 +198,7 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
 
   if (step === "qr" && pixData) {
     const discount = coupon
-      ? ((coupon.tipo === "PERCENTUAL" || coupon.tipo === "porcentagem") ? totalPrice * (coupon.valor / 100) : coupon.valor)
+      ? ((coupon.tipo === "PERCENTUAL" || (coupon.tipo as string) === "porcentagem") ? totalPrice * (coupon.valor / 100) : coupon.valor)
       : 0;
     const finalTotal = totalPrice - discount + (shippingCost || 0);
 

@@ -49,7 +49,7 @@ export function OrderSummary({ shippingCost }: OrderSummaryProps) {
     }
   };
 
-  const finalTotal = totalPrice + shippingCost - discount;
+  const finalTotal = totalPrice + (shippingCost || 0) - discount;
 
   return (
     <div className="rounded-[12px] bg-creme-light p-6 shadow-sm border border-line/60 lg:p-8">

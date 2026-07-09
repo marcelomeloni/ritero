@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiInstagram, FiMail, FiMessageCircle } from "react-icons/fi"; // We will need to install react-icons if not present, but let's assume it's installed or we can just use SVG.
+
 
 export default function Contato() {
   return (
