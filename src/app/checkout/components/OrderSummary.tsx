@@ -15,7 +15,7 @@ export function OrderSummary({ shippingCost }: OrderSummaryProps) {
   const [isApplying, setIsApplying] = useState(false);
 
   const discount = coupon 
-    ? ((coupon.tipo === "PERCENTUAL" || coupon.tipo === "porcentagem") ? totalPrice * (coupon.valor / 100) : coupon.valor)
+    ? ((coupon.tipo === "PERCENTUAL" || (coupon.tipo as string) === "porcentagem") ? totalPrice * (coupon.valor / 100) : coupon.valor)
     : 0;
 
   const handleApplyCoupon = async (e: React.FormEvent) => {
@@ -136,7 +136,7 @@ export function OrderSummary({ shippingCost }: OrderSummaryProps) {
         </form>
         {coupon && (
           <p className="mt-2 font-mono text-[11px] font-bold tracking-wider text-[#2E7D32] uppercase">
-            Cupom {coupon.codigo} aplicado! (-{(coupon.tipo === "PERCENTUAL" || coupon.tipo === "porcentagem") ? `${coupon.valor}%` : `R$ ${coupon.valor}`})
+            Cupom {coupon.codigo} aplicado! (-{(coupon.tipo === "PERCENTUAL" || (coupon.tipo as string) === "porcentagem") ? `${coupon.valor}%` : `R$ ${coupon.valor}`})
           </p>
         )}
         {couponError && <p className="mt-2 font-mono text-[11px] font-bold tracking-wider text-[#D32F2F] uppercase">{couponError}</p>}
