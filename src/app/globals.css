@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-creme: #FFFBCC;
+  --color-creme-light: #FFFFFF;
+  --color-amarelo-claro: #FFE780;
+  --color-amarelo: #FFDB45;
+  --color-preto: #000000;
+  --color-cafe: #231302;
+  --color-terracota: #E52933;
+  --color-ouro: #987438;
+  --color-verde: #B8DD87;
+  --color-line: rgba(35, 19, 2, 0.14);
+  --color-line-strong: rgba(35, 19, 2, 0.22);
+
+  --font-fraunces: var(--font-fraunces-var);
+  --font-work: var(--font-work-var);
+  --font-mono: var(--font-jetbrains-var);
+}
+
+/* ─── Reset & Base ─── */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-creme);
+  color: var(--color-preto);
+  font-family: var(--font-work), sans-serif;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-terracota);
+  color: var(--color-creme);
+}
+
+/* ─── Eyebrow Label ─── */
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-cafe);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--color-terracota);
+  flex-shrink: 0;
+}
+
+/* ─── Elegant Link ─── */
+
+.link-elegant {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-cafe);
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-line);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.link-elegant:hover {
+  color: var(--color-terracota);
+  border-color: var(--color-terracota);
+}
+
+/* ─── Stamp Effect ─── */
+
+.stamp {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-cafe);
+  padding: 6px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* ─── Custom Scrollbar ─── */
+
+.custom-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-cafe);
+  opacity: 0.2;
+  border-radius: 100px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-terracota);
+}
+
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91, 58, 41, 0.25) transparent;
+}
