@@ -1,0 +1,21 @@
+# Ritero Cafés Especiais
+
+> A Ritero é uma torrefação de cafés especiais de origem brasileira. Nós selecionamos lotes exclusivos de fazendas parceiras (como Caparaó) com pontuação alta, torra artesanal e perfis sensoriais únicos. Oferecemos cafés em grãos ou moídos com entrega para todo o Brasil.
+
+## Informações Chave
+- Site: https://ritero.com.br
+- Nome: Ritero Cafés Especiais
+- Produtos principais: Cafés em grãos de torra média, cafés em grãos de torra clara, acessórios para café.
+- Atendimento: suporte@ritero.com.br
+- Endereço: Espírito Santo do Pinhal, SP, Brasil.
+
+## Catálogo Rápido de Produtos
+1. Fazenda Quilombo (Arara, Processo Natural): Notas de Caramelo, rapadura, mel e floral.
+2. Fazenda Recreio (Arara, Processo Natural): Notas de Açúcar mascavo e melaço de cana.
+3. Sítio Santa Rosa (Catuaí Amarelo, Processo Natural): Notas de Amêndoas de cacau, chocolate e avelã.
+
+## Links Úteis
+- Comprar cafés: /produtos
+- Onde encontrar (Pontos Físicos): /onde-comprar
+- Sobre a empresa: /sobre
+- Termos de Uso: /termos-de-uso
