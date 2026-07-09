@@ -14,7 +14,7 @@ const markerIcon = new L.Icon({
 });
 
 interface Ponto {
-  id: number;
+  id: string;
   nome: string;
   tipo: string;
   endereco: string;
@@ -25,12 +25,12 @@ interface Ponto {
 
 interface MapViewProps {
   pontos: Ponto[];
-  selected: number | null;
-  onSelect: (id: number | null) => void;
+  selected: string | null;
+  onSelect: (id: string | null) => void;
 }
 
 /* ── Subcomponent to fly to selected point ── */
-function FlyTo({ pontos, selected }: { pontos: Ponto[]; selected: number | null }) {
+function FlyTo({ pontos, selected }: { pontos: Ponto[]; selected: string | null }) {
   const map = useMap();
 
   useEffect(() => {

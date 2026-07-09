@@ -151,7 +151,7 @@ export function AddressesTab() {
 
             {/* Adicionar Novo */}
             <button 
-              onClick={handleOpenModal}
+              onClick={() => handleOpenModal()}
               className="flex flex-col items-center justify-center gap-4 rounded-[12px] border-2 border-dashed border-line/60 bg-transparent p-6 transition-all hover:border-terracota/50 hover:bg-terracota/5 group min-h-[200px]"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-line/40 text-cafe/50 group-hover:bg-terracota group-hover:text-white transition-colors">
@@ -171,7 +171,7 @@ export function AddressesTab() {
           <div className="bg-[#FDFBF7] rounded-[12px] w-full max-w-2xl p-6 md:p-8 shadow-xl animate-fade-in relative border border-line/60 max-h-[90vh] overflow-y-auto custom-scroll">
             
             <button 
-              onClick={handleCloseModal}
+              onClick={() => handleCloseModal()}
               className="absolute top-4 right-4 md:top-6 md:right-6 text-cafe/50 hover:text-preto transition-colors"
             >
               <X size={20} weight="bold" />

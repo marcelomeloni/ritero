@@ -2,9 +2,9 @@ export async function api<T>(endpoint: string, options: RequestInit = {}): Promi
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
   const url = `${baseUrl}${endpoint}`;
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (typeof window !== "undefined") {
