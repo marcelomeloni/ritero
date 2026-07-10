@@ -288,7 +288,12 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
   );
 }
 
-import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
+import { initMercadoPago, createCardToken } from '@mercadopago/sdk-react';
+
+if (typeof window !== 'undefined') {
+  const pk = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || 'TEST-7c38cec5-8bca-4a3b-8865-d89797fb950d';
+  initMercadoPago(pk);
+}
 
 function CreditCardForm({ addressId, shippingCost }: { addressId: string | null, shippingCost: number | null }) {
   const { items, coupon, clearCart, totalPrice } = useCart();
@@ -358,21 +363,18 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
       }
       const payment_method_id = creditMethod.id;
 
-      // 2. Gerar Token do Cartão
-      const tokenRes = await fetch(`https://api.mercadopago.com/v1/card_tokens?public_key=${pk}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          card_number: cardNumber.replace(/\D/g, ''),
-          cardholder: { name: cardName, identification: { type: 'CPF', number: cpf.replace(/\D/g, '') } },
-          security_code: cvv,
-          expiration_month: parseInt(expiry.split('/')[0]),
-          expiration_year: parseInt("20" + expiry.split('/')[1])
-        })
+      // 2. Gerar Token do Cartão via SDK
+      const tokenData = await createCardToken({
+        cardNumber: cleanNumber,
+        cardholderName: cardName,
+        identificationType: 'CPF',
+        identificationNumber: cpf.replace(/\D/g, ''),
+        securityCode: cvv,
+        cardExpirationMonth: parseInt(expiry.split('/')[0]).toString(),
+        cardExpirationYear: ("20" + expiry.split('/')[1])
       });
-      const tokenData = await tokenRes.json();
-      if (tokenData.error || tokenData.cause) {
-        throw new Error("Dados do cartão inválidos. Verifique as informações.");
+      if (!tokenData || !tokenData.id) {
+        throw new Error(`Erro do MP ao gerar token. Verifique os dados do cartão.`);
       }
       const token = tokenData.id;
 
@@ -642,21 +644,18 @@ function DebitCardForm({ addressId, shippingCost }: { addressId: string | null, 
       }
       const payment_method_id = debitMethod.id;
 
-      // 2. Gerar Token do Cartão
-      const tokenRes = await fetch(`https://api.mercadopago.com/v1/card_tokens?public_key=${pk}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          card_number: cleanNumber,
-          cardholder: { name: cardName, identification: { type: 'CPF', number: cpf.replace(/\D/g, '') } },
-          security_code: cvv,
-          expiration_month: parseInt(expiry.split('/')[0]),
-          expiration_year: parseInt("20" + expiry.split('/')[1])
-        })
+      // 2. Gerar Token do Cartão via SDK
+      const tokenData = await createCardToken({
+        cardNumber: cleanNumber,
+        cardholderName: cardName,
+        identificationType: 'CPF',
+        identificationNumber: cpf.replace(/\D/g, ''),
+        securityCode: cvv,
+        cardExpirationMonth: parseInt(expiry.split('/')[0]).toString(),
+        cardExpirationYear: ("20" + expiry.split('/')[1])
       });
-      const tokenData = await tokenRes.json();
-      if (tokenData.error || tokenData.cause) {
-        throw new Error("Dados do cartão inválidos. Verifique as informações.");
+      if (!tokenData || !tokenData.id) {
+        throw new Error(`Erro do MP ao gerar token. Verifique os dados do cartão de débito.`);
       }
       const token = tokenData.id;
 
