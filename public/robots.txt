@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Bloquear áreas privadas e de admin
+Disallow: /minha-conta
+Disallow: /checkout
+Disallow: /sucesso
+Disallow: /login
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://ritero.com.br/sitemap.xml
