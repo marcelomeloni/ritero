@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const FOOTER_LINKS = [
   { href: "/sobre", label: "A Ritero" },
-  { href: "/produtos", label: "Nossos Cafés" },
+  { href: "/cafes", label: "Nossos Cafés" },
   { href: "/onde-comprar", label: "Onde Encontrar" },
   { href: "/contato", label: "Contato" },
 ];

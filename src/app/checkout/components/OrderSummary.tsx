@@ -6,16 +6,17 @@ import { useState } from "react";
 
 interface OrderSummaryProps {
   shippingCost: number | null;
+  shippingOption?: { name: string; prazo: number } | null;
 }
 
-export function OrderSummary({ shippingCost }: OrderSummaryProps) {
+export function OrderSummary({ shippingCost, shippingOption }: OrderSummaryProps) {
   const { items, totalPrice, updateQuantity, coupon, applyCoupon, removeCoupon } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState("");
   const [isApplying, setIsApplying] = useState(false);
 
   const discount = coupon 
-    ? ((coupon.tipo === "PERCENTUAL" || (coupon.tipo as string) === "porcentagem") ? totalPrice * (coupon.valor / 100) : coupon.valor)
+    ? (coupon.tipo === "PERCENTUAL" ? totalPrice * (coupon.valor / 100) : coupon.valor)
     : 0;
 
   const handleApplyCoupon = async (e: React.FormEvent) => {
@@ -74,6 +75,9 @@ export function OrderSummary({ shippingCost }: OrderSummaryProps) {
               </span>
               <span className="mt-1 font-fraunces text-[14px] font-bold leading-tight text-preto line-clamp-2 pr-2">
                 {item.notas}
+              </span>
+              <span className="mt-1 font-mono text-[10px] font-bold text-cafe/60 tracking-wider">
+                {item.peso_gramas ? `${item.peso_gramas}g` : '250g'} • {item.moagem || 'Em grão'} • SCA {item.pontuacao || '85'}
               </span>
             </div>
             
@@ -136,7 +140,7 @@ export function OrderSummary({ shippingCost }: OrderSummaryProps) {
         </form>
         {coupon && (
           <p className="mt-2 font-mono text-[11px] font-bold tracking-wider text-[#2E7D32] uppercase">
-            Cupom {coupon.codigo} aplicado! (-{(coupon.tipo === "PERCENTUAL" || (coupon.tipo as string) === "porcentagem") ? `${coupon.valor}%` : `R$ ${coupon.valor}`})
+            Cupom {coupon.codigo} aplicado! (-{coupon.tipo === "PERCENTUAL" ? `${coupon.valor}%` : `R$ ${coupon.valor}`})
           </p>
         )}
         {couponError && <p className="mt-2 font-mono text-[11px] font-bold tracking-wider text-[#D32F2F] uppercase">{couponError}</p>}
@@ -160,8 +164,11 @@ export function OrderSummary({ shippingCost }: OrderSummaryProps) {
           </div>
         )}
 
-        <div className="flex justify-between">
-          <span>Frete</span>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col">
+            <span>Frete</span>
+            {shippingOption && <span className="text-[12px] text-cafe/60">{shippingOption.name}</span>}
+          </div>
           <span className="font-medium text-preto">
             {shippingCost !== null 
               ? (shippingCost > 0 

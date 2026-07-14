@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CreditCard, QrCode, Bank } from "@phosphor-icons/react/dist/ssr";
 import { InteractiveCard } from "@/components/cards/InteractiveCard";
 
@@ -9,9 +9,10 @@ type PaymentMethod = "pix" | "credit" | "debit";
 interface PaymentStepProps {
   addressId: string | null;
   shippingCost: number | null;
+  shippingOption?: { name: string; prazo: number } | null;
 }
 
-export function PaymentStep({ addressId, shippingCost }: PaymentStepProps) {
+export function PaymentStep({ addressId, shippingCost, shippingOption }: PaymentStepProps) {
   const [method, setMethod] = useState<PaymentMethod>("credit");
 
   return (
@@ -64,9 +65,9 @@ export function PaymentStep({ addressId, shippingCost }: PaymentStepProps) {
 
       {/* Roteamento Dinâmico dos Formulários */}
       <div className="rounded-[8px] border border-line/60 bg-white p-6 shadow-sm">
-        {method === "pix" && <PixForm addressId={addressId} shippingCost={shippingCost} />}
-        {method === "credit" && <CreditCardForm addressId={addressId} shippingCost={shippingCost} />}
-        {method === "debit" && <DebitCardForm addressId={addressId} shippingCost={shippingCost} />}
+        {method === "pix" && <PixForm addressId={addressId} shippingCost={shippingCost} shippingOption={shippingOption} />}
+        {method === "credit" && <CreditCardForm addressId={addressId} shippingCost={shippingCost} shippingOption={shippingOption} />}
+        {method === "debit" && <DebitCardForm addressId={addressId} shippingCost={shippingCost} shippingOption={shippingOption} />}
       </div>
     </section>
   );
@@ -79,10 +80,10 @@ import { CAFES } from "@/data/cafes";
 
 import { useEffect } from "react";
 
-function PixForm({ addressId, shippingCost }: { addressId: string | null, shippingCost: number | null }) {
+function PixForm({ addressId, shippingCost, shippingOption }: { addressId: string | null, shippingCost: number | null, shippingOption?: { name: string; prazo: number } | null }) {
   const { items, coupon, clearCart, totalPrice } = useCart();
   const [step, setStep] = useState<"idle" | "generating" | "qr" | "approving" | "done">("idle");
-  const [pixData, setPixData] = useState<{ qr_code: string, qr_code_base64: string, id: string } | null>(null);
+  const [pixData, setPixData] = useState<{ qr_code: string, qr_code_base64: string, id: string, valor_total?: number } | null>(null);
 
   const checkStatus = async (orderId: string, token: string) => {
     try {
@@ -104,6 +105,12 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    // Reseta o estado do PIX caso o usuário altere o frete, cupom ou itens do carrinho
+    setStep("idle");
+    setPixData(null);
+  }, [totalPrice, coupon, shippingCost, shippingOption]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -132,17 +139,21 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
     const payload = {
       itens: items.map(item => {
         const realCafe = CAFES.find(c => c.slug === item.slug);
-        const peso = item.id.endsWith("-1kg") ? 1000 : 250;
         return {
           id: realCafe ? realCafe.id : item.id,
-          peso_gramas: peso,
-          quantidade: item.quantidade
+          peso_gramas: item.peso_gramas || (item.id.includes("-1kg") ? 1000 : 250),
+          moagem: item.moagem || "Em grão",
+          pontuacao: item.pontuacao || "85",
+          quantidade: item.quantidade,
+          preco: item.preco
         };
       }),
       id_endereco_entrega: addressId,
       codigo_cupom: coupon?.codigo || null,
       metodo_pagamento: "pix",
-      valor_frete: shippingCost
+      valor_frete: shippingCost,
+      transportadora: shippingOption?.name,
+      prazo_entrega: shippingOption?.prazo
     };
 
     try {
@@ -167,7 +178,8 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
         setPixData({ 
           qr_code: pedido.pix_qr_code, 
           qr_code_base64: pedido.pix_qr_code_base64,
-          id: pedido.id
+          id: pedido.id,
+          valor_total: pedido.valor_total
         });
         setStep("qr");
       } else {
@@ -198,9 +210,12 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
 
   if (step === "qr" && pixData) {
     const discount = coupon
-      ? ((coupon.tipo === "PERCENTUAL" || (coupon.tipo as string) === "porcentagem") ? totalPrice * (coupon.valor / 100) : coupon.valor)
+      ? (coupon.tipo === "PERCENTUAL" ? totalPrice * (coupon.valor / 100) : coupon.valor)
       : 0;
-    const finalTotal = totalPrice - discount + (shippingCost || 0);
+    // Usa o valor retornado pelo backend (se disponível), senão faz o cálculo do frontend como fallback
+    const finalTotal = pixData.valor_total !== undefined 
+      ? pixData.valor_total 
+      : (totalPrice - discount + (shippingCost || 0));
 
     return (
       <div className="flex flex-col items-center justify-center py-6 text-center animate-fade-in">
@@ -288,9 +303,24 @@ function PixForm({ addressId, shippingCost }: { addressId: string | null, shippi
   );
 }
 
-import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
+import { initMercadoPago } from '@mercadopago/sdk-react';
+import createCardToken from '@mercadopago/sdk-react/esm/coreMethods/cardToken/create';
+import CardNumber from '@mercadopago/sdk-react/esm/secureFields/cardNumber';
+import ExpirationDate from '@mercadopago/sdk-react/esm/secureFields/expirationDate';
+import SecurityCode from '@mercadopago/sdk-react/esm/secureFields/securityCode';
 
-function CreditCardForm({ addressId, shippingCost }: { addressId: string | null, shippingCost: number | null }) {
+// Inicializa a SDK
+initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || 'APP_USR-78dc2e75-6a92-41a8-9fdd-10b4d525b18c');
+
+const mpStyle = {
+  color: '#000000',
+  fontSize: '15px',
+  fontFamily: 'monospace',
+  placeholderColor: '#9CA3AF',
+  height: '100%'
+};
+
+function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId: string | null, shippingCost: number | null, shippingOption?: { name: string; prazo: number } | null }) {
   const { items, coupon, clearCart, totalPrice } = useCart();
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
@@ -302,19 +332,15 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleCardNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length > 16) value = value.slice(0, 16);
-    value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
-    setCardNumber(value);
-  };
+  const handleCardNumberFocus = useCallback(() => setFocusedField("cardNumber"), []);
+  const handleCardNumberBlur = useCallback(() => setFocusedField(null), []);
+  const handleCardNumberBinChange = useCallback((e: any) => setCardNumber(e.bin ? e.bin + "0000000000" : ""), []);
 
-  const handleExpiry = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length > 4) value = value.slice(0, 4);
-    if (value.length > 2) value = value.replace(/^(\d{2})(\d)/, "$1/$2");
-    setExpiry(value);
-  };
+  const handleExpiryFocus = useCallback(() => setFocusedField("expiry"), []);
+  const handleExpiryBlur = useCallback(() => setFocusedField(null), []);
+
+  const handleCvvFocus = useCallback(() => setFocusedField("cvv"), []);
+  const handleCvvBlur = useCallback(() => setFocusedField(null), []);
 
   const handleCvv = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, "");
@@ -336,18 +362,22 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
     setErrorMessage(null);
     if (!addressId) { setErrorMessage("Selecione um endereço de entrega."); return; }
     if (shippingCost === null) { setErrorMessage("Aguarde o cálculo do frete."); return; }
-    if (cardNumber.length < 18 || expiry.length < 5 || cvv.length < 3 || cpf.length < 14 || !email) {
-      setErrorMessage("Preencha todos os campos corretamente.");
+    if (!cardName || cpf.length < 14 || !email) {
+      setErrorMessage("Preencha todos os campos de texto corretamente.");
       return;
     }
 
     setIsProcessing(true);
     try {
-      const pk = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || 'TEST-7c38cec5-8bca-4a3b-8865-d89797fb950d';
+      const pk = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || 'APP_USR-78dc2e75-6a92-41a8-9fdd-10b4d525b18c';
       
       // 1. Obter Payment Method ID usando a API do Mercado Pago (BIN look-up)
       const cleanNumber = cardNumber.replace(/\D/g, '');
       const bin = cleanNumber.substring(0, 6);
+      if (bin.length < 6) {
+        throw new Error("Por favor, digite o número do cartão completamente.");
+      }
+      
       const pmRes = await fetch(`https://api.mercadopago.com/v1/payment_methods/search?public_key=${pk}&bin=${bin}`);
       const pmData = await pmRes.json();
       
@@ -358,22 +388,17 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
       }
       const payment_method_id = creditMethod.id;
 
-      // 2. Gerar Token do Cartão
-      const tokenRes = await fetch(`https://api.mercadopago.com/v1/card_tokens?public_key=${pk}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          card_number: cleanNumber,
-          cardholder: { name: cardName, identification: { type: 'CPF', number: cpf.replace(/\D/g, '') } },
-          security_code: cvv,
-          expiration_month: parseInt(expiry.split('/')[0]),
-          expiration_year: parseInt("20" + expiry.split('/')[1])
-        })
+      // 2. Gerar Token do Cartão via SDK Core Methods
+      // O MP já sabe ler os valores de dentro dos SecureFields montados na tela
+      const tokenData: any = await createCardToken({
+        cardholderName: cardName,
+        identificationType: 'CPF',
+        identificationNumber: cpf.replace(/\D/g, '')
       });
-      const tokenData = await tokenRes.json();
-      if (tokenData.error || tokenData.cause) {
+
+      if (!tokenData || tokenData.error || tokenData.cause || !tokenData.id) {
         console.error("Token Error:", tokenData);
-        throw new Error(`Erro do MP ao gerar token: ${tokenData.message || tokenData.error} - Detalhes: ${JSON.stringify(tokenData.cause)}`);
+        throw new Error(`Erro do MP ao gerar token: ${tokenData?.message || tokenData?.error} - Detalhes: ${JSON.stringify(tokenData?.cause)}`);
       }
       const token = tokenData.id;
 
@@ -382,17 +407,21 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
       const payload = {
         itens: items.map(item => {
           const realCafe = CAFES.find(c => c.slug === item.slug);
-          const peso = item.id.endsWith("-1kg") ? 1000 : 250;
           return {
             id: realCafe ? realCafe.id : item.id,
-            peso_gramas: peso,
-            quantidade: item.quantidade
+            peso_gramas: item.peso_gramas || (item.id.includes("-1kg") ? 1000 : 250),
+            moagem: item.moagem || "Em grão",
+            pontuacao: item.pontuacao || "85",
+            quantidade: item.quantidade,
+            preco: item.preco
           };
         }),
         id_endereco_entrega: addressId,
         codigo_cupom: coupon?.codigo || null,
         metodo_pagamento: "cartao_credito",
         valor_frete: shippingCost,
+        transportadora: shippingOption?.name,
+        prazo_entrega: shippingOption?.prazo,
         formData: {
           token,
           payment_method_id,
@@ -424,7 +453,14 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
       window.location.href = `/sucesso?orderId=${orderData.id}`;
 
     } catch (err: any) {
-      setErrorMessage(err.message);
+      console.error("Erro no onSubmit do Checkout:", err);
+      if (Array.isArray(err)) {
+        // O Mercado Pago retorna um array de erros de validação dos Iframes
+        const msgs = err.map(e => e.message || e.code).join(", ");
+        setErrorMessage(`Verifique os dados do cartão: ${msgs}`);
+      } else {
+        setErrorMessage(err.message || String(err));
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -459,16 +495,15 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
             Número do Cartão de Crédito
           </label>
           <div className="relative">
-            <input
-              type="text"
-              placeholder="0000 0000 0000 0000"
-              value={cardNumber}
-              onChange={handleCardNumber}
-              onFocus={() => setFocusedField("cardNumber")}
-              onBlur={() => setFocusedField(null)}
-              className="w-full rounded-[6px] border border-line/80 bg-white pl-4 pr-10 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
-              required
-            />
+            <div className="w-full rounded-[6px] border border-line/80 bg-white pl-4 pr-10 h-[46px] flex flex-col justify-center transition-all focus-within:border-terracota focus-within:ring-2 focus-within:ring-terracota/10">
+              <CardNumber 
+                placeholder="0000 0000 0000 0000" 
+                style={mpStyle}
+                onBinChange={handleCardNumberBinChange}
+                onFocus={handleCardNumberFocus}
+                onBlur={handleCardNumberBlur}
+              />
+            </div>
             <CreditCard size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-cafe/40" />
           </div>
         </div>
@@ -493,32 +528,28 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
           <label className="mb-1.5 block font-work text-[13px] font-medium text-cafe/80">
             Validade
           </label>
-          <input
-            type="text"
-            placeholder="MM/AA"
-            value={expiry}
-            onChange={handleExpiry}
-            onFocus={() => setFocusedField("expiry")}
-            onBlur={() => setFocusedField(null)}
-            className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
-            required
-          />
+          <div className="w-full rounded-[6px] border border-line/80 bg-white px-4 h-[46px] flex flex-col justify-center transition-all focus-within:border-terracota focus-within:ring-2 focus-within:ring-terracota/10">
+            <ExpirationDate 
+              placeholder="MM/AA" 
+              style={mpStyle}
+              onFocus={handleExpiryFocus}
+              onBlur={handleExpiryBlur}
+            />
+          </div>
         </div>
 
         <div>
           <label className="mb-1.5 block font-work text-[13px] font-medium text-cafe/80">
             CVV
           </label>
-          <input
-            type="text"
-            placeholder="123"
-            value={cvv}
-            onChange={handleCvv}
-            onFocus={() => setFocusedField("cvv")}
-            onBlur={() => setFocusedField(null)}
-            className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
-            required
-          />
+          <div className="w-full rounded-[6px] border border-line/80 bg-white px-4 h-[46px] flex flex-col justify-center transition-all focus-within:border-terracota focus-within:ring-2 focus-within:ring-terracota/10">
+            <SecurityCode 
+              placeholder="123" 
+              style={mpStyle}
+              onFocus={handleCvvFocus}
+              onBlur={handleCvvBlur}
+            />
+          </div>
         </div>
 
         {/* Campos extras obrigatórios do MP */}
@@ -575,7 +606,7 @@ function CreditCardForm({ addressId, shippingCost }: { addressId: string | null,
   );
 }
 
-function DebitCardForm({ addressId, shippingCost }: { addressId: string | null, shippingCost: number | null }) {
+function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId: string | null, shippingCost: number | null, shippingOption?: { name: string; prazo: number } | null }) {
   const { items, coupon, clearCart } = useCart();
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
@@ -667,17 +698,21 @@ function DebitCardForm({ addressId, shippingCost }: { addressId: string | null, 
       const payload = {
         itens: items.map(item => {
           const realCafe = CAFES.find(c => c.slug === item.slug);
-          const peso = item.id.endsWith("-1kg") ? 1000 : 250;
           return {
             id: realCafe ? realCafe.id : item.id,
-            peso_gramas: peso,
-            quantidade: item.quantidade
+            peso_gramas: item.peso_gramas || (item.id.includes("-1kg") ? 1000 : 250),
+            moagem: item.moagem || "Em grão",
+            pontuacao: item.pontuacao || "85",
+            quantidade: item.quantidade,
+            preco: item.preco
           };
         }),
         id_endereco_entrega: addressId,
         codigo_cupom: coupon?.codigo || null,
         metodo_pagamento: "cartao_debito",
         valor_frete: shippingCost,
+        transportadora: shippingOption?.name,
+        prazo_entrega: shippingOption?.prazo,
         formData: {
           token,
           payment_method_id,

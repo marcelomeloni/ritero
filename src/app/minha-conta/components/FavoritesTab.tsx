@@ -73,12 +73,12 @@ export function FavoritesTab() {
                   <button onClick={() => handleRemove(product.id)} className="absolute top-3 right-3 text-terracota hover:scale-110 transition-transform z-10 bg-white/10 rounded-full p-1 backdrop-blur-sm">
                     <Heart size={20} weight="fill" />
                   </button>
-                  <Link href={`/produtos/${slug}`} className="absolute inset-0 z-0">
+                  <Link href={`/cafes/${slug}`} className="absolute inset-0 z-0">
                     <Image src={image} alt={title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain p-4 drop-shadow-md transition-transform duration-500 group-hover:scale-105" />
                   </Link>
                 </div>
 
-                <Link href={`/produtos/${slug}`} className="flex flex-col gap-1 mb-6 flex-1 cursor-pointer">
+                <Link href={`/cafes/${slug}`} className="flex flex-col gap-1 mb-6 flex-1 cursor-pointer">
                   <h3 className="font-fraunces text-[18px] font-semibold text-preto leading-tight">
                     {title}
                   </h3>
@@ -89,7 +89,7 @@ export function FavoritesTab() {
 
                 <div className="flex items-center justify-end mt-auto">
                   <Link 
-                    href={`/produtos/${slug}`}
+                    href={`/cafes/${slug}`}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 text-white transition-colors ${product.ativo ? "bg-preto hover:bg-terracota" : "bg-line/80 pointer-events-none"}`}
                   >
                     <ShoppingBag size={16} />

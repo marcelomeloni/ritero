@@ -8,7 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const NAV_LINKS = [
-  { href: "/produtos", label: "Nossos Cafés" },
+  { href: "/cafes", label: "Nossos Cafés" },
   { href: "/sobre", label: "A Ritero" },
   { href: "/onde-comprar", label: "Onde Encontrar" },
   { href: "/contato", label: "Contato" },

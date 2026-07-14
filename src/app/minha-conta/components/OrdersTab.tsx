@@ -15,6 +15,7 @@ export function OrdersTab({ onOrderClick }: OrdersTabProps) {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [hoveredStar, setHoveredStar] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -64,7 +65,7 @@ export function OrdersTab({ onOrderClick }: OrdersTabProps) {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {orders.map((order) => (
+            {orders.slice((currentPage - 1) * 10, currentPage * 10).map((order) => (
               <div 
                 key={order.id}
                 onClick={() => onOrderClick(order)}
@@ -110,6 +111,63 @@ export function OrdersTab({ onOrderClick }: OrdersTabProps) {
                 </div>
               </div>
             ))}
+
+            {orders.length > 10 && (
+              <div className="flex items-center justify-between border-t border-line/60 pt-6 mt-2">
+                <span className="font-work text-[13px] text-cafe/60">
+                  Mostrando <span className="font-semibold text-preto">{(currentPage - 1) * 10 + 1}</span> a <span className="font-semibold text-preto">{Math.min(currentPage * 10, orders.length)}</span> de <span className="font-semibold text-preto">{orders.length}</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="flex items-center justify-center h-9 w-9 rounded-[8px] border border-line/40 bg-white font-mono text-[13px] text-cafe/60 transition-all hover:border-preto/30 hover:text-preto disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    ‹
+                  </button>
+                  
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.ceil(orders.length / 10) }).map((_, i) => {
+                      const page = i + 1;
+                      const totalPages = Math.ceil(orders.length / 10);
+                      if (
+                        page === 1 || 
+                        page === totalPages || 
+                        (page >= currentPage - 1 && page <= currentPage + 1)
+                      ) {
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`flex items-center justify-center h-9 w-9 rounded-[8px] font-mono text-[13px] transition-all ${
+                              currentPage === page
+                                ? "bg-preto text-white font-bold shadow-sm"
+                                : "border border-line/40 bg-white text-cafe/60 hover:border-preto/30 hover:text-preto"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      }
+                      
+                      if (page === currentPage - 2 || page === currentPage + 2) {
+                        return <span key={page} className="text-cafe/40 px-1">...</span>;
+                      }
+                      
+                      return null;
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(Math.min(Math.ceil(orders.length / 10), currentPage + 1))}
+                    disabled={currentPage === Math.ceil(orders.length / 10)}
+                    className="flex items-center justify-center h-9 w-9 rounded-[8px] border border-line/40 bg-white font-mono text-[13px] text-cafe/60 transition-all hover:border-preto/30 hover:text-preto disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

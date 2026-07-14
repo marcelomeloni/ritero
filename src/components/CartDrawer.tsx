@@ -102,6 +102,11 @@ export function CartDrawer() {
                       <h3 className="mt-1 font-fraunces text-[16px] font-bold leading-tight text-preto">
                         {item.notas}
                       </h3>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="font-mono text-[10px] font-bold text-cafe/60 tracking-wider">
+                          {item.peso_gramas}g • {item.moagem} • SCA {item.pontuacao}
+                        </span>
+                      </div>
                       <p className="mt-1 font-mono text-[13px] font-semibold text-terracota">
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.preco)}
                       </p>

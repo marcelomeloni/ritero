@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useUser, Address } from "@/contexts/UserContext";
 import { useCart } from "@/contexts/CartContext";
 import { CheckCircle, MapPin, Plus, Spinner } from "@phosphor-icons/react/dist/ssr";
@@ -8,9 +8,10 @@ import { CheckCircle, MapPin, Plus, Spinner } from "@phosphor-icons/react/dist/s
 interface ShippingStepProps {
   setShippingCost: (cost: number | null) => void;
   setAddressId: (id: string | null) => void;
+  setShippingOption?: (opt: { name: string; prazo: number } | null) => void;
 }
 
-export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProps) {
+export function ShippingStep({ setShippingCost, setAddressId, setShippingOption }: ShippingStepProps) {
   const { savedAddresses, addAddress, loadingAddresses } = useUser();
   const { items } = useCart();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -24,20 +25,34 @@ export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProp
   const [numero, setNumero] = useState("");
   const [complemento, setComplemento] = useState("");
 
-  // Auto-seleciona o primeiro endereço se houver, no mount
+  const [shippingOptions, setShippingOptions] = useState<any[]>([]);
+  const [selectedShippingOption, setSelectedShippingOptionState] = useState<any | null>(null);
+
+  // Guarda o CEP ativo para recalcular quando quantity mudar
+  const activeCepRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (loadingAddresses) return;
-    
-    if (savedAddresses.length > 0 && !selectedAddressId && !isAddingNew) {
-      const defaultAddr = savedAddresses.find(a => a.is_default) || savedAddresses[0];
-      handleSelectSavedAddress(defaultAddr);
-    } else if (savedAddresses.length === 0) {
+    if (savedAddresses.length === 0) {
       setIsAddingNew(true);
     }
-  }, [savedAddresses, loadingAddresses, selectedAddressId, isAddingNew]);
+  }, [savedAddresses, loadingAddresses]);
+
+  // Recalcula o frete sempre que os itens do carrinho mudarem (quantidade)
+  useEffect(() => {
+    if (activeCepRef.current) {
+      calculateFrete(activeCepRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.map(i => `${i.id}:${i.quantidade}`).join(',')]);
 
   const calculateFrete = async (destinoCep: string) => {
+    activeCepRef.current = destinoCep;
     setIsCalculatingFrete(true);
+    setShippingOptions([]);
+    setSelectedShippingOptionState(null);
+    setShippingCost(null);
+    if (setShippingOption) setShippingOption(null);
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
       const res = await fetch(`${API_URL}/public/frete/calcular`, {
@@ -51,22 +66,46 @@ export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProp
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          const validOptions = data.filter((o: any) => !o.error);
-          if (validOptions.length > 0) {
-            const lowestPrice = Math.min(...validOptions.map((o: any) => parseFloat(o.custom_price || o.price)));
-            setShippingCost(lowestPrice);
+          const options = data.filter((o: any) => !o.error).map((o: any) => {
+            const companyName = o.company?.name;
+            const fullName = companyName && !o.name.includes(companyName)
+              ? `${companyName} ${o.name}`
+              : o.name;
+            return { ...o, displayName: fullName };
+          });
+
+          if (options.length > 0) {
+            setShippingOptions(options);
+            handleSelectShipping(options[0]);
           } else {
-            setShippingCost(15.90);
+            fallbackFrete();
           }
         } else {
-           setShippingCost(15.90);
+          fallbackFrete();
         }
       }
     } catch (e) {
       console.error(e);
-      setShippingCost(15.90);
+      fallbackFrete();
     } finally {
       setIsCalculatingFrete(false);
+    }
+  };
+
+  const fallbackFrete = () => {
+    const fb = { name: "SEDEX", displayName: "Correios SEDEX", custom_price: 25.00, custom_delivery_time: 5 };
+    setShippingOptions([fb]);
+    handleSelectShipping(fb);
+  };
+
+  const handleSelectShipping = (option: any) => {
+    setSelectedShippingOptionState(option);
+    setShippingCost(parseFloat(option.custom_price || option.price));
+    if (setShippingOption) {
+      setShippingOption({
+        name: option.name,
+        prazo: option.custom_delivery_time || option.delivery_time
+      });
     }
   };
 
@@ -105,6 +144,7 @@ export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProp
       }
     } else {
       setShippingCost(null);
+      setShippingOptions([]);
     }
   };
 
@@ -176,6 +216,44 @@ export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProp
             })}
           </div>
           
+          {shippingOptions.length > 0 && selectedAddressId && (
+            <div className="mt-4 pt-4 border-t border-line/60 animate-fade-in">
+              <h3 className="font-work text-[14px] font-medium text-preto mb-3">Opções de Frete</h3>
+              <div className="grid grid-cols-1 gap-3">
+                {shippingOptions.map((opt, idx) => {
+                  const isOptSelected = selectedShippingOption?.name === opt.name;
+                  const price = parseFloat(opt.custom_price || opt.price);
+                  const deliveryTime = opt.custom_delivery_time || opt.delivery_time;
+                  return (
+                    <div 
+                      key={idx}
+                      onClick={() => handleSelectShipping(opt)}
+                      className={`
+                        flex items-center justify-between p-4 rounded-[6px] border cursor-pointer transition-all
+                        ${isOptSelected ? "border-terracota bg-terracota/5" : "border-line/60 bg-white hover:border-terracota/30"}
+                      `}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isOptSelected ? 'border-terracota' : 'border-line/80'}`}>
+                          {isOptSelected && <div className="w-2 h-2 rounded-full bg-terracota" />}
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="font-work font-medium text-preto text-[14px]">{opt.displayName || opt.name}</span>
+                          </div>
+                          <span className="font-work text-cafe/60 text-[12px]">Chega em até {deliveryTime} dias úteis</span>
+                        </div>
+                      </div>
+                      <span className="font-fraunces font-bold text-preto text-[15px]">
+                        R$ {price.toFixed(2).replace(".", ",")}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <button 
             onClick={() => {
               setIsAddingNew(true);
@@ -275,6 +353,44 @@ export function ShippingStep({ setShippingCost, setAddressId }: ShippingStepProp
             />
           </div>
           
+          {shippingOptions.length > 0 && !selectedAddressId && (
+            <div className="sm:col-span-6 mt-4 pt-4 border-t border-line/60 animate-fade-in">
+              <h3 className="font-work text-[14px] font-medium text-preto mb-3">Opções de Frete</h3>
+              <div className="grid grid-cols-1 gap-3">
+                {shippingOptions.map((opt, idx) => {
+                  const isOptSelected = selectedShippingOption?.name === opt.name;
+                  const price = parseFloat(opt.custom_price || opt.price);
+                  const deliveryTime = opt.custom_delivery_time || opt.delivery_time;
+                  return (
+                    <div 
+                      key={idx}
+                      onClick={() => handleSelectShipping(opt)}
+                      className={`
+                        flex items-center justify-between p-4 rounded-[6px] border cursor-pointer transition-all
+                        ${isOptSelected ? "border-terracota bg-terracota/5" : "border-line/60 bg-white hover:border-terracota/30"}
+                      `}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isOptSelected ? 'border-terracota' : 'border-line/80'}`}>
+                          {isOptSelected && <div className="w-2 h-2 rounded-full bg-terracota" />}
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="font-work font-medium text-preto text-[14px]">{opt.displayName || opt.name}</span>
+                          </div>
+                          <span className="font-work text-cafe/60 text-[12px]">Chega em até {deliveryTime} dias úteis</span>
+                        </div>
+                      </div>
+                      <span className="font-fraunces font-bold text-preto text-[15px]">
+                        R$ {price.toFixed(2).replace(".", ",")}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="sm:col-span-6 mt-2">
             <button
               onClick={handleSaveNewAddress}

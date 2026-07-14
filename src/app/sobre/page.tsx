@@ -185,7 +185,7 @@ export default function Sobre() {
           
           <div className="mt-12 flex justify-center">
             <Link
-              href="/produtos"
+              href="/cafes"
               className="flex w-full items-center justify-center gap-3 rounded-full bg-preto px-8 py-5 text-center font-mono text-[13px] font-bold tracking-[0.1em] uppercase text-creme transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-preto/20 md:w-auto md:px-14"
             >
               Conheça nossos cafés

@@ -29,13 +29,15 @@ const UserContext = createContext<UserContextData>({} as UserContextData);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
-  const [loadingAddresses, setLoadingAddresses] = useState(false);
-  const { user } = useAuth();
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const load = async () => {
+      if (authLoading) return;
       if (!user) {
         setSavedAddresses([]);
+        setLoadingAddresses(false);
         return;
       }
       try {
@@ -49,7 +51,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
     };
     load();
-  }, [user]);
+  }, [user, authLoading]);
 
   const addAddress = async (newAddress: Omit<Address, "id" | "is_default">, makeDefault = true) => {
     try {

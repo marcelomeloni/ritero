@@ -12,11 +12,12 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 export default function CheckoutPage() {
-  const { items } = useCart();
+  const { items, removeCoupon } = useCart();
   const { user, loading } = useAuth();
   const router = useRouter();
   
   const [shippingCost, setShippingCost] = useState<number | null>(null);
+  const [shippingOption, setShippingOption] = useState<{ name: string; prazo: number } | null>(null);
   const [addressId, setAddressId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,6 +25,12 @@ export default function CheckoutPage() {
       router.replace("/login?redirect=/checkout");
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    // Limpa o cupom sempre que a página de checkout é carregada
+    removeCoupon();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (
@@ -41,7 +48,7 @@ export default function CheckoutPage() {
         <h2 className="font-fraunces text-[32px] font-bold text-preto">Sua sacola está vazia</h2>
         <p className="mt-2 font-work text-[16px] text-cafe/80">Adicione alguns cafés para prosseguir.</p>
         <Link 
-          href="/produtos" 
+          href="/cafes" 
           className="mt-8 rounded-full bg-preto px-8 py-4 font-mono text-[13px] font-bold tracking-[0.1em] text-white uppercase transition-transform hover:scale-[1.02]"
         >
           Voltar para a loja
@@ -57,14 +64,14 @@ export default function CheckoutPage() {
         {/* Coluna Esquerda: Formulários de Preenchimento */}
         <div className="flex flex-col gap-10 lg:gap-12 pb-24 lg:pb-0">
           <ContactStep />
-          <ShippingStep setShippingCost={setShippingCost} setAddressId={setAddressId} />
-          <PaymentStep addressId={addressId} shippingCost={shippingCost} />
+          <ShippingStep setShippingCost={setShippingCost} setAddressId={setAddressId} setShippingOption={setShippingOption} />
+          <PaymentStep addressId={addressId} shippingCost={shippingCost} shippingOption={shippingOption} />
         </div>
 
         {/* Coluna Direita: Resumo do Pedido (Sticky) */}
         <div className="relative order-first lg:order-last mb-8 lg:mb-0">
           <div className="sticky top-8">
-            <OrderSummary shippingCost={shippingCost} />
+            <OrderSummary shippingCost={shippingCost} shippingOption={shippingOption} />
           </div>
         </div>
 

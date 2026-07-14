@@ -44,11 +44,11 @@ export default function Home() {
           </p>
 
           <p className="mt-16 max-w-[460px] font-work text-[16px] leading-[1.8] text-preto/70">
-            Selecionamos lotes que se destacam pela qualidade, origem e perfil sensorial. Nossa missão é proporcionar experiências que conectem você aos aromas, sabores e histórias presentes em cada xícara.
+            Buscamos os melhores lotes do país, com origem única e sabores marcantes. Nosso foco é levar a você um café puro e fresco, cheio de notas ricas e boas histórias em cada xícara.
           </p>
 
           <Link
-            href="/produtos"
+            href="/cafes"
             className="link-elegant mt-12 inline-block self-start"
           >
             Conhecer os cafés
@@ -65,7 +65,7 @@ export default function Home() {
             <h2 className="font-fraunces text-[clamp(26px,3.6vw,42px)] font-semibold tracking-[-0.01em] text-preto">
               Nossos cafés
             </h2>
-            <Link href="/produtos" className="link-elegant self-start md:self-auto">
+            <Link href="/cafes" className="link-elegant self-start md:self-auto">
               Ver todos
             </Link>
           </div>
@@ -74,7 +74,7 @@ export default function Home() {
             {CAFES.map((cafe) => (
               <Link
                 key={cafe.slug}
-                href={`/produtos/${cafe.slug}`}
+                href={`/cafes/${cafe.slug}`}
                 className="group overflow-hidden rounded-[3px] border border-line transition-transform duration-500 hover:scale-[1.02]"
               >
 

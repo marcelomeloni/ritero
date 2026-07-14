@@ -12,6 +12,9 @@ export interface CartItem {
   imagem: string;
   cor: string;
   corTexto: string;
+  moagem: string;
+  peso_gramas: number;
+  pontuacao: string;
 }
 
 export interface CouponData {
@@ -56,6 +59,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     setIsInitialized(true);
   }, []);
+
+  // Clear coupon if cart becomes empty
+  useEffect(() => {
+    if (isInitialized && items.length === 0) {
+      setCoupon(null);
+    }
+  }, [items.length, isInitialized]);
 
   // Sync with local storage
   useEffect(() => {
