@@ -104,16 +104,7 @@ export default function EventosClient() {
             </div>
             <h3 className="mt-6 font-sans text-[22px] font-black uppercase tracking-tight text-[#000000]">Estrutura Completa</h3>
             <p className="mt-3 font-work text-[15px] leading-relaxed text-[#231302]/80 max-w-[300px]">
-              Levamos nosso próprio carrinho, máquinas de espresso profissionais, moedores e todo o maquinário necessário para a ativação.
-            </p>
-          </div>
-          <div className="flex flex-col items-start">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FFDB45] text-[#231302]">
-              <Coffee size={24} />
-            </div>
-            <h3 className="mt-6 font-sans text-[22px] font-black uppercase tracking-tight text-[#000000]">Estrutura Completa</h3>
-            <p className="mt-3 font-work text-[15px] leading-relaxed text-[#231302]/80">
-              Levamos nosso próprio carrinho, máquinas de espresso profissionais, moedores e todo o maquinário necessário para a ativação.
+              Levamos o aroma, o encanto e a experiência mágica de uma verdadeira cafeteria de especialidade até você.
             </p>
           </div>
         </div>
