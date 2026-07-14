@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Ritero",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "https://ritero.com.br/riteroca.png", width: 1200, height: 630, alt: "Ritero Eventos" }],
+    images: [{ url: "https://ritero.com.br/home.png", width: 1200, height: 630, alt: "Ritero Eventos" }],
   },
 };
 

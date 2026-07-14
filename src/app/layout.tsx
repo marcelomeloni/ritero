@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://ritero.com.br/riteroca.png",
+        url: "https://ritero.com.br/home.png",
         width: 1200,
         height: 630,
         alt: "Ritero — Cafés Especiais do Brasil",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ritero — Cafés Especiais do Brasil",
     description: "Cafés especiais de fazendas brasileiras com torra artesanal e rastreabilidade de origem.",
-    images: ["https://ritero.com.br/riteroca.png"],
+    images: ["https://ritero.com.br/home.png"],
   },
   metadataBase: new URL("https://ritero.com.br"),
   alternates: {
@@ -84,7 +84,7 @@ const schemaOrganization = {
     "width": 512,
     "height": 512,
   },
-  "image": "https://ritero.com.br/riteroca.png",
+  "image": "https://ritero.com.br/home.png",
   "description": "Torrefação e loja de cafés especiais de fazendas brasileiras. Selecionamos lotes com alta pontuação SCA, rastreabilidade de origem e torra artesanal.",
   "priceRange": "$$",
   "servesCuisine": "Café Especial",
