@@ -108,8 +108,8 @@ export default async function ProdutoCafe({ params }: { params: Promise<{ slug: 
     "offers": {
       "@type": "AggregateOffer",
       "priceCurrency": "BRL",
-      "lowPrice": cafe.opcoes?.[0]?.preco || 0,
-      "highPrice": cafe.opcoes ? cafe.opcoes[cafe.opcoes.length - 1]?.preco : 0,
+      "lowPrice": 47.60,
+      "highPrice": 189.00,
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
