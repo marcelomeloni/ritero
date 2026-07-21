@@ -31,7 +31,7 @@ export default function Home() {
           <div className="max-w-[900px]">
             <Image 
               src="/logosimples.png" 
-              alt="RITERO" 
+              alt="Logo da Ritero - Cafés Especiais" 
               width={800} 
               height={250} 
               className="h-auto w-full max-w-[400px] md:max-w-[600px]" 
@@ -51,7 +51,7 @@ export default function Home() {
             href="/cafes"
             className="link-elegant mt-12 inline-block self-start"
           >
-            Conhecer os cafés
+            Conhecer nossos cafés especiais
           </Link>
         </div>
       </section>

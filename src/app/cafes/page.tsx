@@ -74,7 +74,7 @@ export default function Produtos() {
                 {cafe.imagem ? (
                   <Image
                     src={cafe.imagem}
-                    alt={`Café ${cafe.notas}`}
+                    alt={`Pacote de café especial Ritero com notas de ${cafe.notas}`}
                     fill
                     className="object-contain p-6 transition-transform duration-700 group-hover:scale-105"
                   />
@@ -128,6 +128,7 @@ export default function Produtos() {
 
                 <div className="mt-5">
                   <span
+                    aria-hidden="true"
                     className="font-mono text-[10px] tracking-[0.1em] uppercase transition-opacity duration-300 group-hover:opacity-100"
                     style={{ color: `${cafe.corTexto}50` }}
                   >
