@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface CartItem {
-  id: string; // Ex: 'fazenda-quilombo-250g'
+  id: string; // Ex: 'fazenda-quilombo-250g-Em grão'
   slug: string;
   nome: string; // Produtor
   notas: string;
@@ -14,7 +14,6 @@ export interface CartItem {
   corTexto: string;
   moagem: string;
   peso_gramas: number;
-  pontuacao: string;
 }
 
 export interface CouponData {

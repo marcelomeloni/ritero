@@ -235,8 +235,16 @@ export function OrderDetails({ order, onBack }: OrderDetailsProps) {
                 <span className="font-mono text-[9px] font-bold uppercase tracking-[0.1em] text-cafe/60">
                   {item.variante_cafe?.cafe?.nome}
                 </span>
-                <span className="mt-1 font-fraunces text-[14px] font-bold text-preto">
-                  {item.variante_cafe?.peso_gramas === 1000 ? "1kg" : "250g"}
+                <span className="mt-1 font-fraunces text-[14px] font-bold text-preto flex items-center gap-2 flex-wrap">
+                  <span>{item.variante_cafe?.peso_gramas === 1000 ? "1kg" : "250g"}</span>
+                  <span className="w-1 h-1 rounded-full bg-cafe/20"></span>
+                  <span>{item.variante_cafe?.preparo || "Em grão"}</span>
+                  {item.variante_cafe?.pontuacao && (
+                    <>
+                      <span className="w-1 h-1 rounded-full bg-cafe/20"></span>
+                      <span>SCA {item.variante_cafe.pontuacao}</span>
+                    </>
+                  )}
                 </span>
               </div>
             </div>

@@ -21,7 +21,7 @@ export function Sidebar({ activeTab, onChangeTab }: SidebarProps) {
   ];
 
   return (
-    <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto custom-scroll pb-4 md:pb-0">
+    <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden custom-scroll pb-4 md:pb-0">
       {menuItems.map((item) => {
         const isActive = activeTab === item.id;
         

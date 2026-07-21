@@ -84,6 +84,7 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
   const { items, coupon, clearCart, totalPrice } = useCart();
   const [step, setStep] = useState<"idle" | "generating" | "qr" | "approving" | "done">("idle");
   const [pixData, setPixData] = useState<{ qr_code: string, qr_code_base64: string, id: string, valor_total?: number } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const checkStatus = async (orderId: string, token: string) => {
     try {
@@ -143,7 +144,6 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
           id: realCafe ? realCafe.id : item.id,
           peso_gramas: item.peso_gramas || (item.id.includes("-1kg") ? 1000 : 250),
           moagem: item.moagem || "Em grão",
-          pontuacao: item.pontuacao || "85",
           quantidade: item.quantidade,
           preco: item.preco
         };
@@ -238,10 +238,14 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
             {pixData.qr_code}
           </p>
           <button 
-            onClick={() => navigator.clipboard.writeText(pixData.qr_code)}
-            className="text-[11px] font-bold uppercase text-terracota hover:underline"
+            onClick={() => {
+              navigator.clipboard.writeText(pixData.qr_code);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className={`text-[11px] font-bold uppercase hover:underline transition-colors ${copied ? "text-green-600 font-semibold" : "text-terracota"}`}
           >
-            Copiar Código
+            {copied ? "Copiado! ✓" : "Copiar Código"}
           </button>
         </div>
 
@@ -411,7 +415,6 @@ function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId
             id: realCafe ? realCafe.id : item.id,
             peso_gramas: item.peso_gramas || (item.id.includes("-1kg") ? 1000 : 250),
             moagem: item.moagem || "Em grão",
-            pontuacao: item.pontuacao || "85",
             quantidade: item.quantidade,
             preco: item.preco
           };
@@ -702,7 +705,6 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
             id: realCafe ? realCafe.id : item.id,
             peso_gramas: item.peso_gramas || (item.id.includes("-1kg") ? 1000 : 250),
             moagem: item.moagem || "Em grão",
-            pontuacao: item.pontuacao || "85",
             quantidade: item.quantidade,
             preco: item.preco
           };

@@ -176,12 +176,6 @@ export default async function ProdutoCafe({ params }: { params: Promise<{ slug: 
               <h1 className="mt-6 font-fraunces text-[clamp(40px,6vw,72px)] font-bold leading-[1.05] tracking-[-0.02em]">
                 {cafe.notas}
               </h1>
-              
-              {/* 
-              <p className="mt-8 max-w-[400px] font-work text-[16px] leading-relaxed opacity-80">
-                Um café autêntico cultivado na região de {cafe.regiao}. Perfil de torra {cafe.torra.toLowerCase()}, processamento {cafe.processo.toLowerCase()} e variedade {cafe.variedade}.
-              </p>
-              */}
 
               <PurchaseSection cafe={cafe} />
             </div>

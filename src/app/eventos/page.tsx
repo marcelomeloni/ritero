@@ -4,7 +4,7 @@ import EventosClient from "./EventosClient";
 export const metadata: Metadata = {
   title: "Ativação de Marca e Eventos | Ritero",
   description:
-    "Leve a experiência da Ritero para o seu evento. Carrinho de café especial, baristas profissionais e cafés premiados para ações corporativas, cursos e feiras.",
+    "Leve a experiência da Ritero para o seu evento. Carrinho de café especial, baristas profissionais e cafés especiais para ações corporativas, eventos wellness, cursos e feiras.",
   keywords: [
     "carrinho de café",
     "barista para eventos",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Ativação de Marca e Eventos | Ritero",
-    description: "Leve a experiência da Ritero para o seu evento. Carrinho de café especial, baristas profissionais e cafés premiados.",
+    description: "Leve a experiência da Ritero para o seu evento. Carrinho de café especial, baristas profissionais e cafés especiais.",
     url: "https://ritero.com.br/eventos",
     siteName: "Ritero",
     locale: "pt_BR",

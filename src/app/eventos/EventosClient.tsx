@@ -39,16 +39,31 @@ export default function EventosClient() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    // Simulação de envio para a futura integração com RESEND
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Dados do formulário:", data);
-    setIsSuccess(true);
-    reset();
-    
-    // Limpa a mensagem de sucesso depois de um tempo
-    setTimeout(() => {
-      setIsSuccess(false);
-    }, 5000);
+    try {
+      const response = await fetch("/api/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao enviar a solicitação");
+      }
+
+      console.log("Dados do formulário:", data);
+      setIsSuccess(true);
+      reset();
+      
+      // Limpa a mensagem de sucesso depois de um tempo
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+    } catch (error) {
+      console.error(error);
+      alert("Houve um erro ao enviar sua mensagem. Por favor, tente novamente.");
+    }
   };
 
   return (
@@ -68,10 +83,10 @@ export default function EventosClient() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-[900px] flex-col items-center text-center">
           <h1 className="font-sans text-[clamp(40px,6vw,72px)] font-black uppercase leading-[1.05] tracking-tight text-[#000000]">
-            A Experiência Ritero <br className="hidden md:block" /> no seu Evento.
+            Experiência Ritero <br className="hidden md:block" /> no seu evento.
           </h1>
           <p className="mt-8 max-w-[600px] font-work text-[16px] md:text-[18px] leading-[1.7] text-cafe/80">
-            Mais do que servir café, nós criamos momentos de pausa, apreciação e conexões reais. Leve cafés especiais de alta pontuação para surpreender seus convidados.
+            Mais do que servir café, nós criamos momentos de pausa, apreciação e conexões reais. Leve o verdadeiro café brasileiro no seu evento, com alta pontuação e surpreenda seus convidados.
           </p>
           <div className="mt-12 flex flex-col sm:flex-row justify-center">
             <a
@@ -93,9 +108,9 @@ export default function EventosClient() {
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FFDB45] text-[#231302]">
               <Star size={24} />
             </div>
-            <h3 className="mt-6 font-sans text-[22px] font-black uppercase tracking-tight text-[#000000]">Cafés Premiados</h3>
+            <h3 className="mt-6 font-sans text-[22px] font-black uppercase tracking-tight text-[#000000]">Cafés Especiais</h3>
             <p className="mt-3 font-work text-[15px] leading-relaxed text-[#231302]/80 max-w-[300px]">
-              Trabalhamos exclusivamente com grãos acima de 83 pontos (SCA), torra fresca artesanal e máxima qualidade.
+              Trabalhamos com grãos acima de 80 pontos (já é considerado especial), torra fresca artesanal e máxima qualidade.
             </p>
           </div>
           <div className="flex flex-col items-center text-center">
@@ -104,7 +119,7 @@ export default function EventosClient() {
             </div>
             <h3 className="mt-6 font-sans text-[22px] font-black uppercase tracking-tight text-[#000000]">Estrutura Completa</h3>
             <p className="mt-3 font-work text-[15px] leading-relaxed text-[#231302]/80 max-w-[300px]">
-              Levamos o aroma, o encanto e a experiência mágica de uma verdadeira cafeteria de especialidade até você.
+              Levamos a estrutura de acordo com sua necessidade, além de toda experiência de uma cafeteira de cafés especiais.
             </p>
           </div>
         </div>
@@ -120,7 +135,7 @@ export default function EventosClient() {
             Adaptamos nossa estrutura para diferentes necessidades e tamanhos de público.
           </p>
 
-          <div className="mt-16 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="mt-16 grid w-full grid-cols-1 gap-6 md:grid-cols-2">
             {[
               {
                 title: "Eventos Corporativos",
@@ -128,7 +143,11 @@ export default function EventosClient() {
               },
               {
                 title: "Lançamentos & Ativações",
-                desc: "Lojas, inaugurações e ações de marketing. O aroma do café especial atrai clientes e gera uma experiência de marca memorável."
+                desc: "Lojas e inaugurações. O cuidado da escolha do grão, aroma e sabor do café especial atrai clientes e cria uma experiência de marca memorável."
+              },
+              {
+                title: "Eventos Wellness",
+                desc: "Para eventos focados em bem-estar e saúde. O café especial puro e de alta qualidade complementa a experiência, conectando corpo e mente."
               },
               {
                 title: "Cursos & Workshops",
@@ -265,6 +284,7 @@ export default function EventosClient() {
                     <option value="">Selecione uma opção...</option>
                     <option value="Corporativo">Evento Corporativo</option>
                     <option value="Lancamento">Lançamento / Ativação de Loja</option>
+                    <option value="Wellness">Evento Wellness</option>
                     <option value="Cursos">Cursos & Workshops</option>
                     <option value="Outros">Outro</option>
                   </select>

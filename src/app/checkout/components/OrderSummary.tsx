@@ -77,7 +77,7 @@ export function OrderSummary({ shippingCost, shippingOption }: OrderSummaryProps
                 {item.notas}
               </span>
               <span className="mt-1 font-mono text-[10px] font-bold text-cafe/60 tracking-wider">
-                {item.peso_gramas ? `${item.peso_gramas}g` : '250g'} • {item.moagem || 'Em grão'} • SCA {item.pontuacao || '85'}
+                {item.peso_gramas ? `${item.peso_gramas}g` : '250g'} • {item.moagem || 'Em grão'}
               </span>
             </div>
             

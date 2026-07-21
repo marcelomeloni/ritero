@@ -92,7 +92,19 @@ function SuccessContent() {
                         </div>
                         <div>
                           <p className="font-work font-semibold text-preto">{cafe?.nome || "Café Especial"}</p>
-                          <p className="font-work text-sm text-cafe/60">Qtd: {item.quantidade}</p>
+                          <p className="font-work text-[13px] text-cafe/60 flex items-center flex-wrap gap-2 mt-0.5">
+                            <span>Qtd: {item.quantidade}</span>
+                            <span className="w-1 h-1 rounded-full bg-cafe/20"></span>
+                            <span>{item.variante_cafe?.peso_gramas === 1000 ? "1kg" : "250g"}</span>
+                            <span className="w-1 h-1 rounded-full bg-cafe/20"></span>
+                            <span>{item.variante_cafe?.preparo || "Em grão"}</span>
+                            {item.variante_cafe?.pontuacao && (
+                              <>
+                                <span className="w-1 h-1 rounded-full bg-cafe/20"></span>
+                                <span>SCA {item.variante_cafe.pontuacao}</span>
+                              </>
+                            )}
+                          </p>
                         </div>
                       </div>
                       <div className="font-mono font-bold text-preto">

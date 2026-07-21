@@ -7,28 +7,15 @@ export interface Cafe {
   processo: string;
   regiao: string;
   torra: string;
-  pontuacao?: string;
+  pontuacao: string; // SCA score — 1:1 with the café, now fixed
   cor: string;
   corTexto: string;
   imagem?: string;
   ilustracao?: string;
   ogImage?: string;
+  precos: { "250g": number; "1kg": number }; // Preços fixos por peso
 }
 
-export const PRECOS_SCA = {
-  "250g": {
-    "86.9": 62.00,
-    "85": 53.00,
-    "83": 47.60,
-  },
-  "1kg": {
-    "86.9": 189.00,
-    "85": 161.00,
-    "83": 139.40,
-  }
-} as const;
-
-export type PontuacaoSCA = "86.9" | "85" | "83";
 export type PesoOpcao = "250g" | "1kg";
 
 export const CAFES: Cafe[] = [
@@ -41,6 +28,8 @@ export const CAFES: Cafe[] = [
     processo: "Natural",
     regiao: "Canastra",
     torra: "Média",
+    pontuacao: "86.9",
+    precos: { "250g": 62.00, "1kg": 189.00 },
     cor: "#FFDB45", // Amarelo
     corTexto: "#231302", // Cafe
     imagem: "/inicio.png",
@@ -56,6 +45,8 @@ export const CAFES: Cafe[] = [
     processo: "Natural",
     regiao: "Vale da Grama",
     torra: "Média",
+    pontuacao: "85",
+    precos: { "250g": 53.00, "1kg": 161.00 },
     cor: "#231302", // Marrom
     corTexto: "#FFFBCC", // Creme
     imagem: "/meio.png",
@@ -71,6 +62,8 @@ export const CAFES: Cafe[] = [
     processo: "Natural",
     regiao: "Vale da Grama",
     torra: "Média",
+    pontuacao: "83",
+    precos: { "250g": 47.60, "1kg": 139.40 },
     cor: "#000000", // Preto
     corTexto: "#FFFBCC", // Creme
     imagem: "/fim.png",

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { addFavorito, removeFavorito, fetchFavoritos } from "@/services/favoritoService";
-import { PRECOS_SCA, type Cafe, type PontuacaoSCA, type PesoOpcao } from "@/data/cafes";
+import { type Cafe, type PesoOpcao } from "@/data/cafes";
 
 interface PurchaseSectionProps {
   cafe: Cafe;
@@ -14,7 +14,6 @@ export function PurchaseSection({ cafe }: PurchaseSectionProps) {
   const [quantidade, setQuantidade] = useState(1);
   const [pesoSelecionado, setPesoSelecionado] = useState<PesoOpcao>("250g");
   const [moagemSelecionada, setMoagemSelecionada] = useState<"Em grão" | "Moído">("Em grão");
-  const [pontuacaoSelecionada, setPontuacaoSelecionada] = useState<PontuacaoSCA>("85");
   const [toastMessage, setToastMessage] = useState("");
   const [isFavoriting, setIsFavoriting] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -23,11 +22,11 @@ export function PurchaseSection({ cafe }: PurchaseSectionProps) {
   const { addToCart, openCart } = useCart();
   const { user } = useAuth();
 
-  const currentPrice = PRECOS_SCA[pesoSelecionado][pontuacaoSelecionada];
+  const currentPrice = cafe.precos[pesoSelecionado];
 
   const handleAddToCart = () => {
     addToCart({
-      id: `${cafe.slug}-${pesoSelecionado}-${pontuacaoSelecionada}-${moagemSelecionada}`,
+      id: `${cafe.slug}-${pesoSelecionado}-${moagemSelecionada}`,
       slug: cafe.slug,
       nome: cafe.produtor,
       notas: cafe.notas,
@@ -38,7 +37,6 @@ export function PurchaseSection({ cafe }: PurchaseSectionProps) {
       corTexto: cafe.corTexto,
       moagem: moagemSelecionada,
       peso_gramas: pesoSelecionado === "1kg" ? 1000 : 250,
-      pontuacao: pontuacaoSelecionada,
     });
     openCart();
   };
@@ -106,33 +104,6 @@ export function PurchaseSection({ cafe }: PurchaseSectionProps) {
           <span className="font-fraunces text-[32px] font-bold tracking-tight">
             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(currentPrice)}
           </span>
-        </div>
-
-        {/* Pontuação SCA Toggle */}
-        <div className="mb-6">
-          <label className="mb-3 block font-mono text-[10px] font-bold uppercase tracking-[0.1em] opacity-60">
-            Classificação SCA
-          </label>
-          <div className="flex flex-wrap gap-3">
-            {(["86.9", "85", "83"] as PontuacaoSCA[]).map((pont) => {
-              const isSelected = pontuacaoSelecionada === pont;
-              return (
-                <button
-                  key={pont}
-                  onClick={() => setPontuacaoSelecionada(pont)}
-                  className={`relative flex flex-col items-center justify-center rounded-[12px] min-w-[80px] py-3 border-2 transition-all duration-300 ${isSelected ? 'scale-[1.03] shadow-md' : 'opacity-70 hover:opacity-100 hover:scale-[1.01]'}`}
-                  style={{
-                    backgroundColor: isSelected ? cafe.corTexto : 'transparent',
-                    color: isSelected ? cafe.cor : cafe.corTexto,
-                    borderColor: isSelected ? cafe.corTexto : `${cafe.corTexto}30`,
-                  }}
-                >
-                  <span className="font-fraunces text-[18px] font-bold leading-none">{pont}</span>
-                  <span className="font-mono text-[9px] uppercase tracking-widest mt-1 opacity-80">Pontos</span>
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {/* Peso Toggle */}
