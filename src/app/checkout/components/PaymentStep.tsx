@@ -255,25 +255,27 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
         </div>
 
         {/* BOTAO PARA TESTE LOCAL / DEV */}
-        <button
-          onClick={async () => {
-            try {
-              const token = localStorage.getItem("ritero_client_token");
-              const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-              await fetch(`${API_URL}/public/pedidos/${pixData.id}/pagar`, {
-                method: "PATCH",
-                headers: { "Authorization": `Bearer ${token}` }
-              });
-              // O checkStatus que roda a cada 5s vai pegar essa mudanca e redirecionar
-              alert("Pagamento simulado com sucesso! Aguarde o redirecionamento.");
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-          className="mt-6 rounded-[6px] border border-terracota bg-terracota/10 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.1em] text-terracota hover:bg-terracota hover:text-white transition-colors"
-        >
-          [DEV] Simular Pagamento PIX
-        </button>
+        {process.env.NODE_ENV === "development" && (
+          <button
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem("ritero_client_token");
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+                await fetch(`${API_URL}/public/pedidos/${pixData.id}/pagar`, {
+                  method: "PATCH",
+                  headers: { "Authorization": `Bearer ${token}` }
+                });
+                // O checkStatus que roda a cada 5s vai pegar essa mudanca e redirecionar
+                alert("Pagamento simulado com sucesso! Aguarde o redirecionamento.");
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+            className="mt-6 rounded-[6px] border border-terracota bg-terracota/10 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.1em] text-terracota hover:bg-terracota hover:text-white transition-colors"
+          >
+            [DEV] Simular Pagamento PIX
+          </button>
+        )}
       </div>
     );
   }
