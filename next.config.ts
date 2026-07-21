@@ -25,21 +25,21 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
   },
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://www.mercadopago.com https://http2.mlstatic.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://ccyqvsfnygvrmpffldvo.supabase.co https://images.unsplash.com https://http2.mlstatic.com",
-      "connect-src 'self' https://ccyqvsfnygvrmpffldvo.supabase.co https://api.mercadopago.com https://viacep.com.br https://melhorenvio.com.br https://melhorenvio.com.br",
-      "frame-src 'self' https://www.mercadopago.com https://sdk.mercadopago.com",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join("; "),
-  },
+  // {
+  //   key: "Content-Security-Policy",
+  //   value: [
+  //     "default-src 'self'",
+  //     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://www.mercadopago.com https://http2.mlstatic.com",
+  //     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  //     "font-src 'self' https://fonts.gstatic.com",
+  //     "img-src 'self' data: blob: https://ccyqvsfnygvrmpffldvo.supabase.co https://images.unsplash.com https://http2.mlstatic.com",
+  //     "connect-src 'self' https://ccyqvsfnygvrmpffldvo.supabase.co https://api.mercadopago.com https://viacep.com.br https://melhorenvio.com.br https://melhorenvio.com.br",
+  //     "frame-src 'self' https://www.mercadopago.com https://sdk.mercadopago.com",
+  //     "object-src 'none'",
+  //     "base-uri 'self'",
+  //     "form-action 'self'",
+  //   ].join("; "),
+  // },
 ];
 
 const nextConfig: NextConfig = {
