@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     const data = await resend.emails.send({
       from: 'Ritero Eventos <onboarding@resend.dev>', // Em produção, altere para um domínio verificado, ex: eventos@ritero.com.br
-      to: ['eventos@ritero.com.br'],
+      to: ['contato@ritero.com.br'],
       subject: `Novo Orçamento de Evento: ${nome}`,
       html: htmlContent,
     });
