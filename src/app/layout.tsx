@@ -68,9 +68,6 @@ export const metadata: Metadata = {
     images: ["https://ritero.com.br/home.png"],
   },
   metadataBase: new URL("https://ritero.com.br"),
-  alternates: {
-    canonical: "https://ritero.com.br",
-  },
 };
 
 const schemaOrganization = {
