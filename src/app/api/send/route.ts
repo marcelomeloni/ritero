@@ -9,6 +9,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { nome, empresa, email, telefone, tipoEvento, dataEstimada, convidados, mensagem } = body;
 
+    const dataEstimadaFormatada = dataEstimada 
+      ? dataEstimada.split('-').reverse().join('/') 
+      : 'Não informada';
+
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -47,7 +51,7 @@ export async function POST(request: Request) {
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #FFFBCC;"><strong style="color: #231302;">Data Estimada:</strong></td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #FFFBCC; color: #231302; opacity: 0.8;">${dataEstimada || 'Não informada'}</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #FFFBCC; color: #231302; opacity: 0.8;">${dataEstimadaFormatada}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #FFFBCC;"><strong style="color: #231302;">Nº de Convidados:</strong></td>
@@ -70,14 +74,23 @@ export async function POST(request: Request) {
       </html>
     `;
 
-    const data = await resend.emails.send({
-      from: 'Ritero Eventos <onboarding@resend.dev>', // Em produção, altere para um domínio verificado, ex: eventos@ritero.com.br
+    console.log("Tentando enviar e-mail via Resend para contato@ritero.com.br com os dados:", { nome, email, tipoEvento });
+    
+    const resendResponse = await resend.emails.send({
+      from: 'Ritero Eventos <eventos@ritero.com.br>',
       to: ['contato@ritero.com.br'],
       subject: `Novo Orçamento de Evento: ${nome}`,
       html: htmlContent,
     });
 
-    return NextResponse.json({ success: true, data });
+    console.log("Resposta da Resend:", resendResponse);
+
+    if (resendResponse.error) {
+      console.error("Erro da Resend:", resendResponse.error);
+      return NextResponse.json({ success: false, error: resendResponse.error }, { status: 400 });
+    }
+
+    return NextResponse.json({ success: true, data: resendResponse.data });
   } catch (error) {
     console.error('Erro ao enviar e-mail via Resend:', error);
     return NextResponse.json(
