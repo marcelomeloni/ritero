@@ -3,8 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { CheckCircle } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -13,6 +14,16 @@ function SuccessContent() {
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  const { clearCart } = useCart();
+  const hasClearedCart = useRef(false);
+
+  useEffect(() => {
+    if (!hasClearedCart.current) {
+      clearCart();
+      hasClearedCart.current = true;
+    }
+  }, [clearCart]);
 
   useEffect(() => {
     if (!orderId) {

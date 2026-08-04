@@ -3,19 +3,30 @@
 import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, updateQuantity, removeFromCart, totalPrice } = useCart();
+  const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Fecha no ESC
+  // Fecha no ESC e controla foco/inert
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeCart();
     };
     window.addEventListener("keydown", handleEsc);
+    
+    if (drawerRef.current) {
+      if (isOpen) {
+        drawerRef.current.removeAttribute("inert");
+        // Opcional: focar o botão de fechar quando abre
+      } else {
+        drawerRef.current.setAttribute("inert", "");
+      }
+    }
+    
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [closeCart]);
+  }, [isOpen, closeCart]);
 
   return (
     <>
@@ -25,10 +36,16 @@ export function CartDrawer() {
         className={`fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
+        aria-hidden="true"
       />
 
       {/* Drawer */}
       <div
+        ref={drawerRef}
+        aria-hidden={!isOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Carrinho de compras"
         className={`fixed top-0 right-0 z-[101] flex h-[100dvh] w-full max-w-[420px] flex-col bg-creme shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen ? "translate-x-0" : "translate-x-[110%]"
         }`}

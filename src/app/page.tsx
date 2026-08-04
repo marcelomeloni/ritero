@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description:
     "Descubra cafés especiais de fazendas brasileiras. Torra artesanal, rastreabilidade de origem e pontuação alta. Compre online com envio rápido.",
   keywords: ["cafés especiais", "café em grãos", "torra artesanal", "café brasileiro", "ritero"],
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function Home() {

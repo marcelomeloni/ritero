@@ -11,10 +11,6 @@ interface OrdersTabProps {
 export function OrdersTab({ onOrderClick }: OrdersTabProps) {
   const [orders, setOrders] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-  const [hoveredStar, setHoveredStar] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -30,22 +26,6 @@ export function OrdersTab({ onOrderClick }: OrdersTabProps) {
     };
     loadOrders();
   }, []);
-
-  const openReviewModal = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setRating(0);
-    setReviewText("");
-    setReviewModalOpen(true);
-  };
-
-  const closeReviewModal = () => {
-    setReviewModalOpen(false);
-  };
-
-  const submitReview = () => {
-    // Simularia envio p/ backend
-    closeReviewModal();
-  };
 
   return (
     <>
@@ -97,7 +77,10 @@ export function OrdersTab({ onOrderClick }: OrdersTabProps) {
 
                   {order.status === 'entregue' && (
                     <button 
-                      onClick={openReviewModal}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOrderClick(order);
+                      }}
                       className="rounded-full bg-preto px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-terracota"
                     >
                       Avaliar
@@ -171,58 +154,6 @@ export function OrdersTab({ onOrderClick }: OrdersTabProps) {
           </div>
         )}
       </div>
-
-      {reviewModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4">
-          <div className="bg-[#FDFBF7] rounded-[12px] w-full max-w-md p-8 shadow-xl animate-fade-in relative border border-line/60">
-            
-            <button 
-              onClick={closeReviewModal}
-              className="absolute top-4 right-4 text-cafe/50 hover:text-preto transition-colors"
-            >
-              <X size={20} weight="bold" />
-            </button>
-
-            <h3 className="font-fraunces text-[24px] font-semibold text-preto mb-2">Avaliar Pedido</h3>
-            <p className="font-work text-[14px] text-cafe/70 mb-8">
-              O que você achou dos nossos cafés? Sua opinião é essencial para melhorarmos.
-            </p>
-
-            <div className="flex items-center justify-center gap-2 mb-8">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onMouseEnter={() => setHoveredStar(star)}
-                  onMouseLeave={() => setHoveredStar(0)}
-                  onClick={() => setRating(star)}
-                  className="transition-transform hover:scale-110 active:scale-95"
-                >
-                  <Star 
-                    size={32} 
-                    weight={star <= (hoveredStar || rating) ? "fill" : "regular"} 
-                    className={star <= (hoveredStar || rating) ? "text-[#F59E0B]" : "text-line"}
-                  />
-                </button>
-              ))}
-            </div>
-
-            <textarea 
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Conte-nos sobre sua experiência com o aroma e o sabor..."
-              className="w-full h-32 rounded-[8px] border border-line/60 bg-white p-4 font-work text-[14px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10 resize-none mb-6"
-            />
-
-            <button 
-              onClick={submitReview}
-              disabled={rating === 0}
-              className="w-full rounded-full bg-preto px-6 py-4 font-mono text-[12px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-terracota disabled:opacity-50 disabled:hover:bg-preto"
-            >
-              Enviar Avaliação
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }

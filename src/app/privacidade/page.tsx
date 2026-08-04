@@ -3,6 +3,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Política de Privacidade",
   description: "Entenda como a Ritero Cafés Especiais protege e trata os seus dados pessoais.",
+  alternates: {
+    canonical: "/privacidade",
+  },
 };
 
 export default function Privacidade() {

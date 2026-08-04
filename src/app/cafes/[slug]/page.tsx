@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
-  const cafeName = cafe.notas.split(",")[0].trim() || cafe.notas;
-  const title = `${cafeName} — Café Especial | Ritero`;
-  const description = `Compre o café especial de ${cafeName}, cultivado na região de ${cafe.regiao} (${cafe.processo}). Notas sensoriais de ${cafe.notas}. Variedade ${cafe.variedade}, torra média artesanal.`;
+  const cafeName = cafe.nome;
+  const title = `Café Especial ${cafeName} | Ritero`;
+  const description = `Experimente o Café Especial ${cafeName}, 100% arábica da região de ${cafe.regiao} (${cafe.processo}). Notas sensoriais de ${cafe.notas}. Torra artesanal média. Compre agora na Ritero.`;
   const imageUrl = `https://ritero.com.br${cafe.ogImage || cafe.imagem || "/riteroca.png"}`;
 
   return {
@@ -31,21 +31,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     keywords: [
       "café especial",
+      "café artesanal",
       cafeName.toLowerCase(),
       cafe.variedade.toLowerCase(),
       cafe.processo.toLowerCase(),
       cafe.regiao.toLowerCase(),
       "café em grãos",
       "torra artesanal",
-      "café brasileiro",
-      "ritero",
       "comprar café especial",
+      "ritero",
     ],
     openGraph: {
       title,
       description,
       url: `https://ritero.com.br/cafes/${slug}`,
-      siteName: "Ritero",
+      siteName: "Ritero Cafés Especiais",
       locale: "pt_BR",
       type: "website",
       images: [
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${cafeName} — Café Especial Ritero`,
+          alt: `Café Especial ${cafeName} - Ritero`,
         },
       ],
     },
@@ -98,7 +98,7 @@ export default async function ProdutoCafe({ params }: { params: Promise<{ slug: 
   const schemaProduct = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": `${cafe.notas.split(",")[0].trim() || cafe.notas} — Café Especial`,
+    "name": `Café Especial ${cafe.nome}`,
     "image": `https://ritero.com.br${cafe.imagem || "/riteroca.png"}`,
     "description": `Café especial de ${cafe.variedade}, processamento ${cafe.processo}. Cultivado na região de ${cafe.regiao}. Notas sensoriais: ${cafe.notas}.`,
     "brand": {
@@ -139,9 +139,9 @@ export default async function ProdutoCafe({ params }: { params: Promise<{ slug: 
         <div className="w-full max-w-[1000px]">
           <Link
             href="/cafes"
-            className="mb-10 inline-flex items-center gap-2 font-mono text-[16px] font-bold tracking-[0.1em] uppercase opacity-60 transition-opacity hover:opacity-100 sm:text-[18px]"
+            className="mb-10 inline-flex items-center gap-2 font-mono text-[12px] font-bold tracking-[0.1em] uppercase opacity-60 transition-opacity hover:opacity-100"
           >
-            <span>←</span> Todos os cafés
+            <span>←</span> Voltar aos cafés
           </Link>
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_auto]">

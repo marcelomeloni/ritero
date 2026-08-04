@@ -137,10 +137,17 @@ export function OrderDetails({ order, onBack }: OrderDetailsProps) {
             Realizado em {new Date(order.data_criacao).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
           </span>
         </div>
-        <button className="flex items-center justify-center gap-2 rounded-[6px] border border-line/80 px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.05em] text-preto transition-colors hover:bg-preto hover:text-white">
-          <Receipt size={16} />
-          Baixar Nota Fiscal
-        </button>
+        {order.nfe_pdf_url && (
+          <a 
+            href={order.nfe_pdf_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-[6px] border border-line/80 px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.05em] text-preto transition-colors hover:bg-preto hover:text-white"
+          >
+            <Receipt size={16} />
+            Baixar Nota Fiscal
+          </a>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">

@@ -12,6 +12,7 @@ import { twMerge } from "tailwind-merge";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { login, register as registerUser } from "@/services/authService";
+import toast from "react-hot-toast";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -75,7 +76,7 @@ function LoginContent() {
         // Após registrar, manda pro login
         setIsRegister(false);
         clearErrors();
-        alert("Conta criada com sucesso! Por favor, faça login.");
+        toast.success("Conta criada com sucesso! Por favor, faça login.");
       } else {
         const response = await login(data.email, data.senha);
         loginState(response.token, response.user);
@@ -125,6 +126,7 @@ function LoginContent() {
                     "w-full rounded-[6px] border bg-white px-4 py-3 font-work text-[15px] text-preto outline-none transition-all placeholder:text-cafe/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracota",
                     errors.nome ? "border-terracota focus-visible:ring-terracota/80" : "border-line/60 focus:border-terracota/60"
                   )}
+                  autoComplete="name"
                 />
                 {errors.nome && (
                   <p className="mt-2 font-work text-[13px] text-terracota">
@@ -150,6 +152,7 @@ function LoginContent() {
                       "w-full rounded-[6px] border bg-white px-4 py-3 font-work text-[15px] text-preto outline-none transition-all placeholder:text-cafe/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracota",
                       errors.cpf ? "border-terracota focus-visible:ring-terracota/80" : "border-line/60 focus:border-terracota/60"
                     )}
+                    autoComplete="off"
                   />
                   {errors.cpf && (
                     <p className="mt-2 font-work text-[13px] text-terracota">
@@ -170,6 +173,7 @@ function LoginContent() {
                       "w-full rounded-[6px] border bg-white px-4 py-3 font-work text-[15px] text-preto outline-none transition-all placeholder:text-cafe/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracota",
                       errors.telefone ? "border-terracota focus-visible:ring-terracota/80" : "border-line/60 focus:border-terracota/60"
                     )}
+                    autoComplete="tel"
                   />
                   {errors.telefone && (
                     <p className="mt-2 font-work text-[13px] text-terracota">
@@ -194,6 +198,7 @@ function LoginContent() {
                   "w-full rounded-[6px] border bg-white px-4 py-3 font-work text-[15px] text-preto outline-none transition-all placeholder:text-cafe/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracota",
                   errors.email ? "border-terracota focus-visible:ring-terracota/80" : "border-line/60 focus:border-terracota/60"
                 )}
+                autoComplete="email"
               />
               {errors.email && (
                 <p className="mt-2 font-work text-[13px] text-terracota">
@@ -220,6 +225,7 @@ function LoginContent() {
                     "w-full rounded-[6px] border bg-white px-4 py-3 pr-10 font-work text-[15px] text-preto outline-none transition-all placeholder:text-cafe/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracota",
                     errors.senha ? "border-terracota focus-visible:ring-terracota/80" : "border-line/60 focus:border-terracota/60"
                   )}
+                  autoComplete={isRegister ? "new-password" : "current-password"}
                 />
                 <button
                   type="button"

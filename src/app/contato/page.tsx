@@ -1,7 +1,15 @@
-"use client";
 
 import Link from "next/link";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Fale com a gente",
+  description: "Seja para tirar uma dúvida sobre nossos cafés, elogiar ou se tornar um revendedor parceiro, estamos sempre à disposição.",
+  alternates: {
+    canonical: "/contato",
+  },
+};
 
 export default function Contato() {
   return (

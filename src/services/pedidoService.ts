@@ -41,6 +41,9 @@ export interface Pedido {
   status: string;
   codigo_rastreio: string | null;
   url_rastreio: string | null;
+  nfe_chave: string | null;
+  nfe_xml_url: string | null;
+  nfe_pdf_url: string | null;
   data_criacao: string;
   endereco: Endereco;
   item_pedido: PedidoItem[];

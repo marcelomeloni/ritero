@@ -1,6 +1,7 @@
 export interface Cafe {
   id: string;
   slug: string;
+  nome: string;
   produtor: string;
   notas: string;
   variedade: string;
@@ -22,6 +23,7 @@ export const CAFES: Cafe[] = [
   {
     id: "8578bc84-565a-4f7b-ab47-d71e2f7f774f",
     slug: "caramelo-e-rapadura",
+    nome: "Caramelo e Rapadura",
     produtor: "Fazenda Quilombo",
     notas: "Caramelo, rapadura, mel e floral",
     variedade: "Arara",
@@ -39,6 +41,7 @@ export const CAFES: Cafe[] = [
   {
     id: "d8514dbe-2037-4ab4-bf49-b47667337b0d",
     slug: "acucar-mascavo",
+    nome: "Açúcar Mascavo",
     produtor: "Fazenda Recreio",
     notas: "Açúcar mascavo e melaço de cana",
     variedade: "Arara",
@@ -56,6 +59,7 @@ export const CAFES: Cafe[] = [
   {
     id: "7a55e7df-d0c2-40cd-918e-db85e3d71cd2",
     slug: "chocolate-e-avela",
+    nome: "Chocolate e Avelã",
     produtor: "Sítio Santa Rosa",
     notas: "Amêndoas de cacau, chocolate e avelã",
     variedade: "Catuaí Amarelo",

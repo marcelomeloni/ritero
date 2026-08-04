@@ -52,5 +52,9 @@ export function InteractiveCard(props: CardProps) {
 
   const CardComponent = CARD_COMPONENTS[theme] ?? CARD_COMPONENTS.default;
 
-  return <CardComponent {...props} />;
+  return (
+    <div className="transform scale-[0.9] sm:scale-100 transition-transform flex justify-center">
+      <CardComponent {...props} />
+    </div>
+  );
 }

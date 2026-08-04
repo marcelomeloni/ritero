@@ -6,6 +6,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Nossa história",
   description: "Conheça a história da Ritero. Do grão à xícara, sem pressa. Valorizamos o produtor local e a torra perfeita para o seu café de todo dia.",
+  alternates: {
+    canonical: "/sobre",
+  },
 };
 
 export default function Sobre() {

@@ -119,6 +119,7 @@ const schemaWebSite = {
 import { NavigationWrapper } from "@/components/NavigationWrapper";
 import { UserProvider } from "@/contexts/UserContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -143,6 +144,18 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <UserProvider>
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                className: "font-mono text-[12px] uppercase tracking-[0.05em]",
+                duration: 4000,
+                style: {
+                  background: "#FDFBF7",
+                  color: "#18181B",
+                  border: "1px solid rgba(229,229,229,0.5)",
+                },
+              }}
+            />
             <NavigationWrapper>{children}</NavigationWrapper>
           </UserProvider>
         </AuthProvider>

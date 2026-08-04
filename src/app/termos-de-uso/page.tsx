@@ -3,6 +3,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Termos de Uso",
   description: "Termos e condições de uso do site e serviços da Ritero Cafés Especiais.",
+  alternates: {
+    canonical: "/termos-de-uso",
+  },
 };
 
 export default function TermosDeUso() {

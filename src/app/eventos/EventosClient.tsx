@@ -8,6 +8,7 @@ import * as z from "zod";
 import { Coffee, Star, Users, Loader2, CheckCircle2 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import toast from "react-hot-toast";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -62,7 +63,7 @@ export default function EventosClient() {
       }, 5000);
     } catch (error) {
       console.error(error);
-      alert("Houve um erro ao enviar sua mensagem. Por favor, tente novamente.");
+      toast.error("Houve um erro ao enviar sua mensagem. Por favor, tente novamente.");
     }
   };
 

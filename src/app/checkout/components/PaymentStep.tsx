@@ -77,6 +77,7 @@ export function PaymentStep({ addressId, shippingCost, shippingOption }: Payment
 
 import { useCart } from "@/contexts/CartContext";
 import { CAFES } from "@/data/cafes";
+import toast from "react-hot-toast";
 
 import { useEffect } from "react";
 
@@ -96,7 +97,6 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
         const order = await res.json();
         if (order.status === "PREPARANDO" || order.status === "PAGO" || order.status === "ENVIADO") {
           setStep("done");
-          clearCart();
           setTimeout(() => {
             window.location.href = `/sucesso?orderId=${orderId}`;
           }, 2000);
@@ -126,11 +126,11 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
 
   const handleGeneratePix = async () => {
     if (!addressId) {
-      alert("Por favor, selecione um endereço de entrega.");
+      toast.error("Por favor, selecione um endereço de entrega.");
       return;
     }
     if (shippingCost === null) {
-      alert("Aguarde o cálculo do frete.");
+      toast.error("Aguarde o cálculo do frete.");
       return;
     }
 
@@ -186,7 +186,7 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
         throw new Error("Não foi possível gerar o código PIX.");
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
       setStep("idle");
     }
   };
@@ -266,7 +266,7 @@ function PixForm({ addressId, shippingCost, shippingOption }: { addressId: strin
                   headers: { "Authorization": `Bearer ${token}` }
                 });
                 // O checkStatus que roda a cada 5s vai pegar essa mudanca e redirecionar
-                alert("Pagamento simulado com sucesso! Aguarde o redirecionamento.");
+                toast.success("Pagamento simulado com sucesso! Aguarde o redirecionamento.");
               } catch (e) {
                 console.error(e);
               }
@@ -454,7 +454,6 @@ function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId
       }
 
       const orderData = await res.json();
-      clearCart();
       window.location.href = `/sucesso?orderId=${orderData.id}`;
 
     } catch (err: any) {
@@ -525,6 +524,7 @@ function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId
             onFocus={() => setFocusedField("cardName")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] uppercase outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="cc-name"
             required
           />
         </div>
@@ -570,6 +570,7 @@ function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId
             onFocus={() => setFocusedField("cpf")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="off"
             required
           />
         </div>
@@ -586,6 +587,7 @@ function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId
             onFocus={() => setFocusedField("email")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="email"
             required
           />
         </div>
@@ -605,6 +607,12 @@ function CreditCardForm({ addressId, shippingCost, shippingOption }: { addressId
               "Pagar com Crédito"
             )}
           </button>
+          <div className="mt-4 flex items-center justify-center gap-2 text-cafe/60">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            <span className="font-work text-[12px] font-medium">Pagamento processado com segurança via Mercado Pago</span>
+          </div>
         </div>
       </div>
     </form>
@@ -744,7 +752,6 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
       }
 
       const orderData = await res.json();
-      clearCart();
       window.location.href = `/sucesso?orderId=${orderData.id}`;
 
     } catch (err: any) {
@@ -790,6 +797,7 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
               onFocus={() => setFocusedField("cardNumber")}
               onBlur={() => setFocusedField(null)}
               className="w-full rounded-[6px] border border-line/80 bg-white pl-4 pr-10 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+              autoComplete="cc-number"
               required
             />
             <Bank size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-cafe/40" />
@@ -808,6 +816,7 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
             onFocus={() => setFocusedField("cardName")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] uppercase outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="cc-name"
             required
           />
         </div>
@@ -824,6 +833,7 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
             onFocus={() => setFocusedField("expiry")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="cc-exp"
             required
           />
         </div>
@@ -840,6 +850,7 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
             onFocus={() => setFocusedField("cvv")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="cc-csc"
             required
           />
         </div>
@@ -856,6 +867,7 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
             onFocus={() => setFocusedField("cpf")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-mono text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="off"
             required
           />
         </div>
@@ -872,6 +884,7 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
             onFocus={() => setFocusedField("email")}
             onBlur={() => setFocusedField(null)}
             className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+            autoComplete="email"
             required
           />
         </div>
@@ -891,6 +904,12 @@ function DebitCardForm({ addressId, shippingCost, shippingOption }: { addressId:
               "Pagar com Débito"
             )}
           </button>
+          <div className="mt-4 flex items-center justify-center gap-2 text-cafe/60">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            <span className="font-work text-[12px] font-medium">Pagamento processado com segurança via Mercado Pago</span>
+          </div>
         </div>
       </div>
     </form>

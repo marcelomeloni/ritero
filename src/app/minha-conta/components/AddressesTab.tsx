@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { MapPin, Plus, Trash, PencilSimple, X } from "@phosphor-icons/react/dist/ssr";
 import { useUser, Address } from "@/contexts/UserContext";
+import { ConfirmModal } from "@/components/modals/ConfirmModal";
+import toast from "react-hot-toast";
 
 export function AddressesTab() {
   const { savedAddresses, removeAddress, addAddress, updateAddress, loadingAddresses } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
 
   // Form states
   const [cep, setCep] = useState("");
@@ -113,7 +116,20 @@ export function AddressesTab() {
         </div>
 
         {loadingAddresses ? (
-          <div className="flex items-center justify-center py-12 w-full text-cafe/70 font-work">Carregando endereços...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex flex-col h-[200px] rounded-[12px] border border-line/40 bg-[#FDFBF7] p-6 animate-pulse">
+                <div className="h-5 w-3/4 bg-line/80 rounded mb-4"></div>
+                <div className="h-4 w-full bg-line/60 rounded mb-2"></div>
+                <div className="h-4 w-5/6 bg-line/60 rounded mb-2"></div>
+                <div className="h-4 w-1/2 bg-line/60 rounded mb-6"></div>
+                <div className="mt-auto flex gap-4 pt-4 border-t border-line/40">
+                  <div className="h-4 w-16 bg-line/80 rounded"></div>
+                  <div className="h-4 w-16 bg-line/80 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
             {savedAddresses.map((address) => (
@@ -140,7 +156,7 @@ export function AddressesTab() {
                   <PencilSimple size={14} /> Editar
                 </button>
                 <button 
-                  onClick={() => removeAddress(address.id)}
+                  onClick={() => setAddressToDelete(address.id)}
                   className="flex items-center gap-2 text-cafe/60 hover:text-red-600 font-mono text-[10px] font-bold uppercase tracking-widest transition-colors"
                 >
                   <Trash size={14} /> Excluir
@@ -193,6 +209,7 @@ export function AddressesTab() {
                   value={cep}
                   onChange={handleCepChange}
                   className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+                  autoComplete="postal-code"
                 />
               </div>
 
@@ -205,6 +222,7 @@ export function AddressesTab() {
                   value={rua}
                   onChange={(e) => setRua(e.target.value)}
                   className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+                  autoComplete="address-line1"
                 />
               </div>
 
@@ -242,6 +260,7 @@ export function AddressesTab() {
                   value={bairro}
                   onChange={(e) => setBairro(e.target.value)}
                   className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+                  autoComplete="address-level3"
                 />
               </div>
 
@@ -254,6 +273,7 @@ export function AddressesTab() {
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
                   className="w-full rounded-[6px] border border-line/80 bg-white px-4 py-3 font-work text-[15px] outline-none transition-all focus:border-terracota focus:ring-2 focus:ring-terracota/10"
+                  autoComplete="address-level2"
                 />
               </div>
               
@@ -280,6 +300,21 @@ export function AddressesTab() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={!!addressToDelete}
+        title="Excluir endereço"
+        description="Tem certeza que deseja excluir este endereço permanentemente? Esta ação não pode ser desfeita."
+        confirmText="Excluir endereço"
+        onCancel={() => setAddressToDelete(null)}
+        onConfirm={() => {
+          if (addressToDelete) {
+            removeAddress(addressToDelete);
+            toast.success("Endereço excluído com sucesso");
+            setAddressToDelete(null);
+          }
+        }}
+      />
     </>
   );
 }
